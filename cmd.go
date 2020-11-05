@@ -10,8 +10,8 @@ import (
 	"github.com/didi/gendry/manager"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/mkideal/cli"
-	"kratos-gen-dao/internal/dao"
-	"kratos-gen-dao/internal/schema"
+	"github.com/dasheyuan/kratos-gen-dao/internal/dao"
+	"github.com/dasheyuan/kratos-gen-dao/internal/schema"
 )
 
 func main() {
