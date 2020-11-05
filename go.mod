@@ -1,4 +1,4 @@
-module kratos-gen-dao
+module github.com/dasheyuan/kratos-gen-dao
 
 go 1.14
 
