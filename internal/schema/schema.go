@@ -43,7 +43,7 @@ func readTableStruct(db *sql.DB, tableName string, dbName string) (columnSlice, 
 }
 
 func createStructSourceCode(cols columnSlice, tableName string) (io.Reader, string, error) {
-	structName := convertUnderScoreToCammel(tableName)
+	structName := convertUnderScoreToCamel(tableName)
 	fillData := sourceCode{
 		StructName: structName,
 		TableName:  tableName,

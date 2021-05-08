@@ -56,6 +56,10 @@ func stringTypeWrapper(s string) typer {
 	return stringType(strings.ToLower(s))
 }
 
+func enumTypeWrapper(s string) typer {
+	return stringType(strings.ToLower(s))
+}
+
 func float64TypeWrapper(s string) typer {
 	return float64Type(strings.ToLower(s))
 }
@@ -137,7 +141,7 @@ func (s stringType) Type() string {
 }
 
 func (s stringType) Match() bool {
-	var supportType = []string{"char", "text", "json"}
+	var supportType = []string{"char", "text", "json","enum"}
 	ss := string(s)
 	for _, t := range supportType {
 		if strings.Contains(ss, t) {

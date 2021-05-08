@@ -7,11 +7,11 @@ import (
 	"io"
 	"os"
 
+	"github.com/dasheyuan/kratos-gen-dao/internal/dao"
+	"github.com/dasheyuan/kratos-gen-dao/internal/schema"
 	"github.com/didi/gendry/manager"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/mkideal/cli"
-	"github.com/dasheyuan/kratos-gen-dao/internal/dao"
-	"github.com/dasheyuan/kratos-gen-dao/internal/schema"
 )
 
 func main() {
@@ -22,7 +22,7 @@ func main() {
 
 var help = cli.HelpCommand("display help information")
 
-const version = "0.0.3"
+const version = "0.0.5"
 
 type rootArg struct {
 	cli.Helper
