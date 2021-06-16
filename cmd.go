@@ -124,6 +124,7 @@ func addImport(packageName string) io.Reader {
 		"context"
 		"github.com/didi/gendry/builder"
 		"github.com/didi/gendry/scanner"
+		"github.com/go-kratos/kratos/pkg/database/sql"
 		"time"
 	)
 
