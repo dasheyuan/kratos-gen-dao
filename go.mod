@@ -1,6 +1,6 @@
-module github.com/dasheyuan/kratos-gen-dao
+module github.com/dasheyuan/kratos-gen-dao/v2
 
-go 1.14
+go 1.16
 
 require (
 	github.com/didi/gendry v1.5.0
