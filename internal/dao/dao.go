@@ -9,19 +9,13 @@ import (
 const (
 	daoCode = `
 
-	//Get{{.StructName}}(ctx context.Context, where map[string]interface{}, selectField []string) (*{{.StructName}}, error)
-	//GetMulti{{.StructName}}(ctx context.Context, where map[string]interface{}, selectField []string) ([]*{{.StructName}}, error)
-	//Create{{.StructName}}(ctx context.Context, data []map[string]interface{}) (int64, error)
-	//Update{{.StructName}}(ctx context.Context, where, data map[string]interface{}) (int64, error)
-	//Delete{{.StructName}}(ctx context.Context, where map[string]interface{}) (int64, error)
-
-	//GetOne gets one record from table {{.TableName}} by condition "where"
-	func (d *dao) Get{{.StructName}}(ctx context.Context, where map[string]interface{}, selectField []string) (*{{.StructName}}, error) {
+	//Get{{.StructName}} gets one record from table {{.TableName}} by condition "where"
+	func Get{{.StructName}}(db *gorm.DB, where map[string]interface{}, selectField []string) (*{{.StructName}}, error) {
 		cond,vals,err := builder.BuildSelect("{{.TableName}}", where, selectField)
 		if nil != err {
 			return nil, err
 		}
-		row,err := d.db.Query(ctx, cond, vals...)
+		row, err := db.Raw(cond, vals...).Rows()
 		if nil != err || nil == row {
 			return nil, err
 		}
@@ -31,59 +25,63 @@ const (
 		return res,err
 	}
 
-	//GetMulti gets multiple records from table {{.TableName}} by condition "where"
-	func (d *dao) GetMulti{{.StructName}}(ctx context.Context, where map[string]interface{}, selectField []string) ([]*{{.StructName}}, error) {
+	//GetMulti{{.StructName}} gets multiple records from table {{.TableName}} by condition "where"
+	func GetMulti{{.StructName}}(db *gorm.DB, where map[string]interface{}, selectField []string) ([]*{{.StructName}}, error) {
 		cond,vals,err := builder.BuildSelect("{{.TableName}}", where, selectField)
 		if nil != err {
 			return nil, err
 		}
-		row,err := d.db.Query(ctx, cond, vals...)
-		if nil != err || nil == row {
+		rows, err := db.Raw(cond, vals...).Rows()
+		if nil != err || nil == rows {
 			return nil, err
 		}
-		defer row.Close()
+		defer rows.Close()
 		var res []*{{.StructName}}
-		err = scanner.Scan(row, &res)
+		err = scanner.Scan(rows, &res)
 		return res,err
 	}
 
-	//Insert inserts an array of data into table {{.TableName}}
-	func (d *dao) Create{{.StructName}}(ctx context.Context, data []map[string]interface{}) (int64, error) {
+	//Create{{.StructName}} inserts an array of data into table {{.TableName}}
+	func Create{{.StructName}}(db *gorm.DB, data []map[string]interface{}) (int64, error) {
 		cond, vals, err := builder.BuildInsert("{{.TableName}}", data)
 		if nil != err {
 			return 0, err
 		}
-		result,err := d.db.Exec(ctx, cond, vals...)
-		if nil != err || nil == result {
+		if db, err := db.DB(); err == nil {
+		res, err := db.Exec(cond, vals...)
+		if nil != err {
 			return 0, err
 		}
-		return result.LastInsertId()
+		return res.LastInsertId()
+		} else {
+			return 0, err
+		}
 	}
 
-	//Update updates the table {{.TableName}}
-	func (d *dao) Update{{.StructName}}(ctx context.Context, where, data map[string]interface{}) (int64, error) {
+	//Update{{.StructName}} updates the table {{.TableName}}
+	func Update{{.StructName}}(db *gorm.DB, where, data map[string]interface{}) (int64, error) {
 		cond,vals,err := builder.BuildUpdate("{{.TableName}}", where, data)
 		if nil != err {
 			return 0, err
 		}
-		result,err := d.db.Exec(ctx, cond, vals...)
-		if nil != err {
+		res := db.Exec(cond, vals...)
+		if nil != res.Error {
 			return 0, err
 		}
-		return result.RowsAffected()
+		return res.RowsAffected, nil
 	}
 
-	// Delete deletes matched records in {{.TableName}}
-	func (d *dao) Delete{{.StructName}}(ctx context.Context, where map[string]interface{}) (int64, error) {
+	//Delete{{.StructName}} deletes matched records in {{.TableName}}
+	func Delete{{.StructName}}(db *gorm.DB, where map[string]interface{}) (int64, error) {
 		cond,vals,err := builder.BuildDelete("{{.TableName}}", where)
 		if nil != err {
 			return 0, err
 		}
-		result,err := d.db.Exec(ctx, cond, vals...)
-		if nil != err {
+		res := db.Exec(cond, vals...)
+		if nil != res.Error {
 			return 0, err
 		}
-		return result.RowsAffected()
+		return res.RowsAffected, nil
 	}
 	`
 )
