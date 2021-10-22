@@ -83,6 +83,33 @@ const (
 		}
 		return res.RowsAffected, nil
 	}
+
+	func CountMulti{{.StructName}}(db *gorm.DB, ctx context.Context, where map[string]interface{}, selectField []string) ([]*{{.StructName}}, int64, error) {
+		cond, vals, err := builder.BuildSelect("{{.TableName}}", where, []string{"COUNT(*)"})
+		if nil != err {
+			return nil, 0, err
+		}
+		var total int64
+		err = db.WithContext(ctx).Raw(cond, vals...).Scan(&total).Error
+		if err != nil {
+			return nil, 0, err
+		}
+		if total > 0 {
+			cond, vals, err := builder.BuildSelect("{{.TableName}}", where, selectField)
+			if nil != err {
+				return nil, 0, err
+			}
+			row, err := db.WithContext(ctx).Raw(cond, vals...).Rows()
+			if nil != err || nil == row {
+				return nil, 0, err
+			}
+			defer row.Close()
+			var res []*{{.StructName}}
+			err = scanner.Scan(row, &res)
+			return res, total, err
+		}
+		return nil, 0, nil
+	}
 	`
 )
 
