@@ -1,5 +1,5 @@
 fork from [gforge](https://github.com/caibirdme/gforge)
-build for [kratos@v2](https://github.com/go-kratos/kratos)
+build for [kratos@v2](https://go-kratos.dev)
 
 ### 1. 使用方法
 ```shell
