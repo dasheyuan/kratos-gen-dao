@@ -10,12 +10,12 @@ const (
 	daoCode = `
 
 	//Get{{.StructName}} gets one record from table {{.TableName}} by condition "where"
-	func Get{{.StructName}}(db *gorm.DB, where map[string]interface{}, selectField []string) (*{{.StructName}}, error) {
+	func Get{{.StructName}}(db *gorm.DB, ctx context.Context, where map[string]interface{}, selectField []string) (*{{.StructName}}, error) {
 		cond,vals,err := builder.BuildSelect("{{.TableName}}", where, selectField)
 		if nil != err {
 			return nil, err
 		}
-		row, err := db.Raw(cond, vals...).Rows()
+		row, err := db.WithContext(ctx).Raw(cond, vals...).Rows()
 		if nil != err || nil == row {
 			return nil, err
 		}
@@ -26,12 +26,12 @@ const (
 	}
 
 	//GetMulti{{.StructName}} gets multiple records from table {{.TableName}} by condition "where"
-	func GetMulti{{.StructName}}(db *gorm.DB, where map[string]interface{}, selectField []string) ([]*{{.StructName}}, error) {
+	func GetMulti{{.StructName}}(db *gorm.DB, ctx context.Context, where map[string]interface{}, selectField []string) ([]*{{.StructName}}, error) {
 		cond,vals,err := builder.BuildSelect("{{.TableName}}", where, selectField)
 		if nil != err {
 			return nil, err
 		}
-		rows, err := db.Raw(cond, vals...).Rows()
+		rows, err := db.WithContext(ctx).Raw(cond, vals...).Rows()
 		if nil != err || nil == rows {
 			return nil, err
 		}
@@ -42,12 +42,12 @@ const (
 	}
 
 	//Create{{.StructName}} inserts an array of data into table {{.TableName}}
-	func Create{{.StructName}}(db *gorm.DB, data []map[string]interface{}) (int64, error) {
+	func Create{{.StructName}}(db *gorm.DB, ctx context.Context, data []map[string]interface{}) (int64, error) {
 		cond, vals, err := builder.BuildInsert("{{.TableName}}", data)
 		if nil != err {
 			return 0, err
 		}
-		if db, err := db.DB(); err == nil {
+		if db, err := db.WithContext(ctx).DB(); err == nil {
 		res, err := db.Exec(cond, vals...)
 		if nil != err {
 			return 0, err
@@ -59,12 +59,12 @@ const (
 	}
 
 	//Update{{.StructName}} updates the table {{.TableName}}
-	func Update{{.StructName}}(db *gorm.DB, where, data map[string]interface{}) (int64, error) {
+	func Update{{.StructName}}(db *gorm.DB, ctx context.Context, where, data map[string]interface{}) (int64, error) {
 		cond,vals,err := builder.BuildUpdate("{{.TableName}}", where, data)
 		if nil != err {
 			return 0, err
 		}
-		res := db.Exec(cond, vals...)
+		res := db.WithContext(ctx).Exec(cond, vals...)
 		if nil != res.Error {
 			return 0, err
 		}
@@ -72,12 +72,12 @@ const (
 	}
 
 	//Delete{{.StructName}} deletes matched records in {{.TableName}}
-	func Delete{{.StructName}}(db *gorm.DB, where map[string]interface{}) (int64, error) {
+	func Delete{{.StructName}}(db *gorm.DB, ctx context.Context, where map[string]interface{}) (int64, error) {
 		cond,vals,err := builder.BuildDelete("{{.TableName}}", where)
 		if nil != err {
 			return 0, err
 		}
-		res := db.Exec(cond, vals...)
+		res := db.WithContext(ctx).Exec(cond, vals...)
 		if nil != res.Error {
 			return 0, err
 		}
